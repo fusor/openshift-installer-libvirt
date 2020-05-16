@@ -1,0 +1,17 @@
+apiVersion: v1
+baseDomain: tt.testing
+metadata:
+  name: test1
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: {{ workers }}
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: {{ masters }}
+platform:
+  libvirt:
+    URI: qemu+tcp://192.168.122.1/system
+pullSecret: '{{ pull_secret }}'
+sshKey: '{{ ssh_key }}'

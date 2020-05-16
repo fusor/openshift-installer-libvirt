@@ -1,0 +1,24 @@
+---
+version: 4.4
+
+#4.4.4
+image_sha: baa687f29b0ac155d8f4c6914056d36d68f343feb9c1e82b46eef95819d00be5
+#4.4.3
+#image_sha: 039a4ef7c128a049ccf916a1d68ce93e8f5494b44d5a75df60c85e9e7191dacc
+
+#Resources
+master_ram: 16384
+master_vcpu: 8
+worker_ram: 16384
+worker_vcpu: 8
+workers: 3
+
+#There be dragons
+gopath: "{{ lookup('env', 'GOPATH') }}"
+image: quay.io/openshift-release-dev/ocp-release@sha256:{{ image_sha }}
+installerpath: /src/github.com/openshift/installer
+masters: 3
+path: "{{ gopath }}{{ installerpath }}"
+pull_secret: "{{ lookup('env', 'PULL_SECRET')|string }}"
+repo: 'https://github.com/openshift/installer.git'
+ssh_key: "{{ lookup('env', 'OCP_LIBVIRT_SSH_KEY') }}"
