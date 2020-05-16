@@ -174,3 +174,9 @@
     chdir: "{{ path }}/bin"
   environment:
     OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE: "{{ image }}"
+
+- debug:
+    msg:
+    - "`export KUBECONFIG={{ path }}/bin/auth/kubeconfig` to use the cluster"
+    - "The console address is https://console-openshift-console.apps.test1.tt.testing"
+    - "`cat {{ path }}/bin/auth/kubeadmin-password` to get the kubeadmin users password"

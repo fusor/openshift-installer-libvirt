@@ -17,3 +17,6 @@ This repo contains an ansible role to simplify running openshift-install with li
 
 ## Finding additional versions
 To find an image SHA for a version not listed check for the release.txt for that version at https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/
+
+## TODO
+Add a simple destroy-cluster playbook
