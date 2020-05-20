@@ -13,7 +13,7 @@ This repo contains an ansible role to simplify running openshift-install with li
   * worker_ram
   * worker_vcpu
   * workers
-1. run `ansible-playbook openshift-install-libvirt.yml`
+1. run `ansible-playbook create-cluster.yml`
 
 To destroy the cluster when done run `ansible-playbook destroy-cluster.yml`.
 
