@@ -6,7 +6,7 @@ This repo contains an ansible role to simplify running openshift-install with li
 1. export the SSH public key using the env var OCP_LIBVIRT_SSH_KEY
 1. export your GOPATH if you haven't already. It will be necessary in order to build openshift installer
 1. edit default.yaml to make desired changes to
-  * `version` - The OpenShift major.minor version to deploy.
+  * `version` - The OpenShift Major.Minor version to deploy.
   * `base_domain` - Combined with the cluster_name to create the cluster FQDN.
   * `cluster_name` - Combined with the base_domain to create the cluster FQDN.
   * `cluster_bridge` - The name of the network bridge. The role defaults cluster_name, but can be different.
@@ -25,4 +25,4 @@ To destroy the cluster when done run `ansible-playbook destroy-cluster.yml`.
 To find an image SHA for a version not listed check for the release.txt for that version at https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/
 
 ## Multiple Clusters
-It should be possible to deploy multiple clusters as long as base_domain, cluster_name (or at least the cluster_bridge name), and cluster_network are unique. In practice when I try to do so on my system both clusters get unstable and the second cluster fails to provision.
+It should be possible to deploy multiple clusters as long as base_domain, cluster_name (or at least the cluster_bridge name), and cluster_network are unique. In practice when I try to do so load on my system increases drastically, both clusters becomes unstable, and the second cluster ultimately fails to provision.
