@@ -3,7 +3,24 @@
   vars_files:
   - defaults.yml
   tasks:
+  - name: Check for metadata.json
+    stat:
+      path: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/metadata.json"
+    register: metadata_json
+
   - name: Destroy installed cluster
-    shell: "./openshift-install destroy cluster"
+    shell: "../openshift-install destroy cluster"
     args:
-      chdir: "{{ path }}/bin"
+      chdir: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}"
+    when: metadata_json.stat.exists
+
+  - name: Remove cluster sub-directory
+    file:
+      path: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}"
+      state: absent
+
+  - name: Remove dnsmasq config
+    file:
+      path: /etc/NetworkManager/dnsmasq.d/openshift.{{ cluster_name }}.{{ base_domain }}.conf
+      state: absent
+    become: true

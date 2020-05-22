@@ -1,6 +1,10 @@
 ---
+#Cluster personalization
 version: 4.4
-
+base_domain: tt.testing
+cluster_name: test1
+cluster_bridge: "{{ cluster_name }}"
+cluster_network: 192.168.126.0
 #4.4.4
 image_sha: baa687f29b0ac155d8f4c6914056d36d68f343feb9c1e82b46eef95819d00be5
 #4.4.3

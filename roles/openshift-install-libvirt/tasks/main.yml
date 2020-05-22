@@ -80,10 +80,10 @@
 - name: Add NetworkManager dnsmasq.d configuration
   copy:
     content: |
-             server=/tt.testing/192.168.126.1
-             address=/.apps.tt.testing/192.168.126.51
-             address=/.apps.test1.tt.testing/192.168.126.51
-    dest: /etc/NetworkManager/dnsmasq.d/openshift.conf
+             server=/{{ base_domain }}/{{ cluster_network.split('.') | reject('search','0') | join('.') }}.1
+             address=/.apps.{{ base_domain }}/{{ cluster_network.split('.') | reject('search','0') | join('.') }}.51
+             address=/.apps.{{ cluster_name }}.{{ base_domain }}/{{ cluster_network.split('.') | reject('search','0') | join('.') }}.51
+    dest: /etc/NetworkManager/dnsmasq.d/openshift.{{ cluster_name }}.{{ base_domain }}.conf
   become: true
 
 - name: Reload NetworkManager
@@ -107,15 +107,20 @@
   environment:
     TAGS: libvirt
 
+- name: Create cluster sub-directory
+  file:
+    path: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}"
+    state: directory
+
 - name: Create install-config.yaml
   template:
     src: install-config.yaml.j2
-    dest: "{{ path }}/bin/install-config.yaml"
+    dest: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/install-config.yaml"
 
 - name: Create manifests
-  shell: ./openshift-install create manifests
+  shell: ../openshift-install create manifests
   args:
-    chdir: "{{ path }}/bin"
+    chdir: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}"
 
 - name: Update master RAM
   replace:
@@ -123,9 +128,9 @@
     regexp: 'domainMemory:.*'
     replace: "domainMemory: {{ master_ram }}"
   with_items:
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-0.yaml"
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-1.yaml"
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-2.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-0.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-1.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-2.yaml"
 
 - name: Update master vCPU
   replace:
@@ -133,9 +138,9 @@
     regexp: 'domainVcpu:.*'
     replace: "domainVcpu: {{ master_vcpu }}"
   with_items:
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-0.yaml"
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-1.yaml"
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_master-machines-2.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-0.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-1.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-2.yaml"
 
 
 - name: Update worker RAM
@@ -144,7 +149,7 @@
     regexp: 'domainMemory:.*'
     replace: "domainMemory: {{ worker_ram }}"
   with_items:
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_worker-machineset-0.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_worker-machineset-0.yaml"
 
 - name: Update worker vCPU
   replace:
@@ -152,30 +157,30 @@
     regexp: 'domainVcpu:.*'
     replace: "domainVcpu: {{ worker_vcpu }}"
   with_items:
-  - "{{ path }}/bin/openshift/99_openshift-cluster-api_worker-machineset-0.yaml"
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_worker-machineset-0.yaml"
 
 - name: Add hostname to new virsh network
   shell: |
-         virsh net-update $(virsh net-list | grep test | awk '{ print $1 }') add dns-host \
-         "<host ip='192.168.126.51'><hostname>oauth-openshift.apps.test1.tt.testing</hostname></host>";
+         virsh net-update $(virsh net-list | grep {{ cluster_name }} | awk '{ print $1 }') add dns-host \
+         "<host ip='{{ cluster_network.split('.') | reject('search','0') | join('.') }}.51'><hostname>oauth-openshift.apps.{{ cluster_name }}.{{ base_domain }}</hostname></host>";
          while [ $? -ne 0 ]; do
            sleep 5
-           virsh net-update $(virsh net-list | grep test | awk '{ print $1 }') add dns-host \
-           "<host ip='192.168.126.51'><hostname>oauth-openshift.apps.test1.tt.testing</hostname></host>";
+           virsh net-update $(virsh net-list | grep {{ cluster_name }} | awk '{ print $1 }') add dns-host \
+           "<host ip='{{ cluster_network.split('.') | reject('search','0') | join('.') }}.51'><hostname>oauth-openshift.apps.{{ cluster_name }}.{{ base_domain }}</hostname></host>";
          done
   async: 600
   poll: 0
   become: true
 
 - name: Run install
-  shell: "./openshift-install create cluster"
+  shell: "../openshift-install create cluster"
   args:
-    chdir: "{{ path }}/bin"
+    chdir: "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}"
   environment:
     OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE: "{{ image }}"
 
 - debug:
     msg:
-    - "`export KUBECONFIG={{ path }}/bin/auth/kubeconfig` to use the cluster"
-    - "The console address is https://console-openshift-console.apps.test1.tt.testing"
-    - "`cat {{ path }}/bin/auth/kubeadmin-password` to get the kubeadmin users password"
+    - "`export KUBECONFIG={{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/auth/kubeconfig` to use the cluster"
+    - "The console address is https://console-openshift-console.apps.{{ cluster_name }}.{{ base_domain }}"
+    - "`cat {{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/auth/kubeadmin-password` to get the kubeadmin users password"

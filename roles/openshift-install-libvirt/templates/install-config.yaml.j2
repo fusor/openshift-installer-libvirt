@@ -1,7 +1,7 @@
 apiVersion: v1
-baseDomain: tt.testing
+baseDomain: {{ base_domain }}
 metadata:
-  name: test1
+  name: {{ cluster_name }}
 compute:
 - hyperthreading: Enabled
   name: worker
@@ -10,8 +10,18 @@ controlPlane:
   hyperthreading: Enabled
   name: master
   replicas: {{ masters }}
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: {{ cluster_network }}/24
+  serviceNetwork:
+  - 172.30.0.0/16
 platform:
   libvirt:
     URI: qemu+tcp://192.168.122.1/system
+    network:
+      if: {{ cluster_bridge }}
 pullSecret: '{{ pull_secret }}'
 sshKey: '{{ ssh_key }}'
