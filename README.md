@@ -24,5 +24,5 @@ To destroy the cluster when done run `ansible-playbook destroy-cluster.yml`.
 ## Finding additional versions
 To find an image SHA for a version not listed check for the release.txt for that version at https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/
 
-## Multiple Clusters
-It should be possible to deploy multiple clusters as long as `base_domain`, `cluster_name` (or at least `cluster_bridge`), and `cluster_network` are unique. In practice when I try to do so load on my system increases drastically, both clusters becomes unstable, and the second cluster ultimately fails to provision.
+## Issues
+There is no load balancer when using libvirt. Two ingress routers are created and can land on any worker. In order to ensure one of the routers will land where it is expected it is suggested that you do not make masters schedulable and only provision two workers.

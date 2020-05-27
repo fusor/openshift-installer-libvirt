@@ -1,21 +1,24 @@
 ---
 #Cluster personalization
-version: 4.4
 base_domain: tt.testing
 cluster_name: test1
 cluster_bridge: "{{ cluster_name }}"
 cluster_network: 192.168.126.0
+masters_schedulable: false
+version: 4.4
+#4.4.5
+image_sha: 4a461dc23a9d323c8bd7a8631bed078a9e5eec690ce073f78b645c83fb4cdf74
 #4.4.4
-image_sha: baa687f29b0ac155d8f4c6914056d36d68f343feb9c1e82b46eef95819d00be5
+#image_sha: baa687f29b0ac155d8f4c6914056d36d68f343feb9c1e82b46eef95819d00be5
 #4.4.3
 #image_sha: 039a4ef7c128a049ccf916a1d68ce93e8f5494b44d5a75df60c85e9e7191dacc
 
 #Resources
-master_ram: 16384
-master_vcpu: 8
+master_ram: 8192
+master_vcpu: 4
 worker_ram: 16384
-worker_vcpu: 8
-workers: 3
+worker_vcpu: 4
+workers: 2
 
 #There be dragons
 gopath: "{{ lookup('env', 'GOPATH') }}"

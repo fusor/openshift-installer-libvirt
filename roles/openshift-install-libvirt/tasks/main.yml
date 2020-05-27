@@ -142,6 +142,14 @@
   - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-1.yaml"
   - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/openshift/99_openshift-cluster-api_master-machines-2.yaml"
 
+- name: Make masters schedulable
+  replace:
+    path: "{{ item }}"
+    regexp: 'mastersSchedulable:.*'
+    replace: "mastersSchedulable: true"
+  with_items:
+  - "{{ path }}/bin/{{ cluster_name }}.{{ base_domain }}/manifests/cluster-scheduler-02-config.yml"
+  when: masters_schedulable
 
 - name: Update worker RAM
   replace:
