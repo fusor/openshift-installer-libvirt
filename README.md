@@ -26,3 +26,6 @@ To find an image SHA for a version not listed check for the release.txt for that
 
 ## Issues
 There is no load balancer when using libvirt. Two ingress routers are created and can land on any worker. In order to ensure one of the routers will land where it is expected it is suggested that you do not make masters schedulable and only provision two workers.
+
+If after bringing up the cluster you would like to deploy additional workers you can scale up by running a command like:
+`oc scale -n openshift-machine-api machineset --replicas=3 --all`
