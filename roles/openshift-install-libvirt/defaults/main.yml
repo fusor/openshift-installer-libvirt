@@ -2,12 +2,13 @@
 #Cluster personalization
 base_domain: tt.testing
 cluster_name: test1
-cluster_bridge: "{{ cluster_name }}"
 cluster_network: 192.168.126.0
-masters_schedulable: false
+cluster_bridge: "{{ cluster_name }}"
 version: 4.4
+#4.4.6
+image_sha: 7613d8f7db639147b91b16b54b24cfa351c3cbde6aa7b7bf1b9c80c260efad06
 #4.4.5
-image_sha: 4a461dc23a9d323c8bd7a8631bed078a9e5eec690ce073f78b645c83fb4cdf74
+#image_sha: 4a461dc23a9d323c8bd7a8631bed078a9e5eec690ce073f78b645c83fb4cdf74
 #4.4.4
 #image_sha: baa687f29b0ac155d8f4c6914056d36d68f343feb9c1e82b46eef95819d00be5
 #4.4.3
@@ -25,6 +26,7 @@ gopath: "{{ lookup('env', 'GOPATH') }}"
 image: quay.io/openshift-release-dev/ocp-release@sha256:{{ image_sha }}
 installerpath: /src/github.com/openshift/installer
 masters: 3
+masters_schedulable: false
 path: "{{ gopath }}{{ installerpath }}"
 pull_secret: "{{ lookup('env', 'PULL_SECRET')|string }}"
 repo: 'https://github.com/openshift/installer.git'

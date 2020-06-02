@@ -5,7 +5,7 @@ This repo contains an ansible role to simplify running openshift-install with li
 1. export your pull secret using the env var `PULL_SECRET`
 1. export the SSH public key using the env var `OCP_LIBVIRT_SSH_KEY`
 1. export your `GOPATH` if you haven't already. It will be necessary in order to build openshift installer
-1. edit `default.yaml` to make desired changes to
+1. edit `config.yml` to make desired changes to
   * `version` - The OpenShift Major.Minor version to deploy.
   * `base_domain` - Combined with the `cluster_name` to create the cluster FQDN.
   * `cluster_name` - Combined with the `base_domain` to create the cluster FQDN.
